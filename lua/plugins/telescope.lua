@@ -6,7 +6,7 @@ return {
     config = function(_, opts)
         local telescope = require("telescope")
         telescope.setup(opts)
-        telescope.load_extension("session-lens")
+        -- telescope.load_extension("session-lens")
     end,
     cmd = "Telescope",
     version = false, -- telescope did only one release, so use HEAD for now
@@ -15,7 +15,7 @@ return {
         { "<leader>/",       "<cmd>Telescope live_grep<cr>",                        desc = "Find in Files"           },
         { "<leader>:",       "<cmd>Telescope command_history<cr>",                  desc = "Command History"         },
 
-        { "<leader>fs",      "<cmd>Telescope session-lens search_session<cr>",      desc = "Find Session"            },
+        -- { "<leader>fs",      "<cmd>Telescope session-lens search_session<cr>",      desc = "Find Session"            },
 
         {
             "<leader><space>",
@@ -33,7 +33,7 @@ return {
         {
             "<leader>fv",
             function()
-                require('telescope.builtin').find_files( { cwd = vim.fn.stdpath("config"), hidden = true, no_ignore = true })
+                require('telescope.builtin').git_files( { cwd = vim.fn.stdpath("config"), hidden = true, no_ignore = true })
             end,
             desc = "Find Nvim Config"
         },

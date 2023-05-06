@@ -1,6 +1,6 @@
 -- Automatically choose compiler on filetype.
 vim.cmd([[
-    au BufRead * try | execute "compiler ".&filetype | catch /./ | endtry
+    au BufRead * try | silent execute "compiler ".&filetype | catch /./ | endtry
 ]])
 
 -- [[ Highlight on yank ]]
@@ -31,6 +31,7 @@ vim.api.nvim_create_autocmd("WinLeave", {
     pattern = "*",
 })
 
+-- Load local project settings file.
 -- Carefull, can be called multiple times if directory is changed
 local nvim_project = vim.api.nvim_create_augroup("NvimProject", { clear = true })
 vim.api.nvim_create_autocmd({"DirChanged", "VimEnter"}, {
@@ -41,6 +42,7 @@ vim.api.nvim_create_autocmd({"DirChanged", "VimEnter"}, {
         end
     end,
     group = nvim_project,
+    nested = true,
     pattern = "*",
 })
 

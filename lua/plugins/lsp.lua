@@ -7,7 +7,12 @@ return {
         dependencies = {
             -- LSP Support
             {"neovim/nvim-lspconfig"},             -- Required
-            {"williamboman/mason.nvim"},           -- Optional
+            {                                      -- Optional
+                'williamboman/mason.nvim',
+                build = function()
+                    pcall(vim.cmd, 'MasonUpdate')
+                end,
+            },
             {"williamboman/mason-lspconfig.nvim"}, -- Optional
 
             -- Autocompletion
@@ -23,15 +28,39 @@ return {
             {"rafamadriz/friendly-snippets"}, -- Optional
         },
         config = function()
+            require("mason").setup()
+            require("mason-lspconfig").setup({
+                ensure_installed = {
+                    -- Replace these with whatever servers you want to install
+                    "lua_ls",
+                }
+            })
+
             -- Learn the keybindings, see :help lsp-zero-keybindings
             -- Learn to configure LSP servers, see :help lsp-zero-api-showcase
             local lsp = require("lsp-zero")
-            lsp.preset('recommended')
+            lsp.preset("recommended")
 
             -- (Optional) Configure lua language server for neovim
             lsp.nvim_workspace()
 
             lsp.setup()
+
+            -- Autocompletion configuration
+            local cmp = require('cmp')
+            local cmp_action = require('lsp-zero').cmp_action()
+            cmp.setup({
+                mapping = {
+                    ['<CR>'] = cmp.mapping.confirm({select = true}),
+                    ['<Tab>'] = cmp_action.luasnip_supertab(),
+                    ['<S-Tab>'] = cmp_action.luasnip_shift_supertab(),
+                },
+                preselect = 'item',
+                completion = {
+                    completeopt = 'menu,menuone,noinsert'
+                },
+            })
+
 
             -- Setup vim lsp
             vim.diagnostic.config({
@@ -65,7 +94,7 @@ return {
             { "<leader>px",     [[<cmd> TroubleToggle<cr>]], desc = "Project diagnostic" },
             { "[D",     [[<cmd>lua require("trouble").first({skip_groups = true, jump = true})<cr>]], desc = "Jump frist diagnostic" },
             { "[d",     [[<cmd>lua require("trouble").previous({skip_groups = true, jump = true})<cr>]], desc = "Jump previous diagnostic" },
-            { "[D",     [[<cmd>lua require("trouble").last({skip_groups = true, jump = true})<cr>]], desc = "Jump last diagnostic" },
+            { "]D",     [[<cmd>lua require("trouble").last({skip_groups = true, jump = true})<cr>]], desc = "Jump last diagnostic" },
             { "]d",     [[<cmd>lua require("trouble").next({skip_groups = true, jump = true})<cr>]], desc = "Jump next diagnostic" },
         },
         config = function()
@@ -86,86 +115,102 @@ return {
 
             null_ls.setup({ debug = true })
 
-            -- local jai_null_lsp = {
-            --     method = null_ls.methods.DIAGNOSTICS,
-            --     filetypes = { "jai" },
-            --     generator = {
-            --         multiple_files = true,
-            --         fn = function(params)
-            --             local diagnostics = {}
-            --             local qferrors = vim.fn.getqflist()
-            --             -- sources have access to a params object
-            --             -- containing info about the current file and editor state
-            --             for i, error in ipairs(qferrors) do
-            --                 if error.valid == 1 then
-            --                     table.insert(diagnostics, {
-            --                         bufnr = error.bufnr,
-            --                         row = error.lnum,
-            --                         end_row = error.end_lnum,
-            --                         col = error.col,
-            --                         end_col = error.end_col,
-            --                         source = "jai_null_lsp",
-            --                         message = error.text,
-            --                         severity = vim.diagnostic.severity.ERROR,
-            --                     })
-            --                 end
-            --             end
-            --             -- for i, line in ipairs(params.content) do
-            --             --     local col, end_col = line:find("really")
-            --             --     if col and end_col then
-            --             --         -- null-ls fills in undefined positions
-            --             --         -- and converts source diagnostics into the required format
-            --             --         table.insert(diagnostics, {
-            --             --             row = i,
-            --             --             col = col,
-            --             --             end_col = end_col + 1,
-            --             --             source = "no-really",
-            --             --             message = "Don't use 'really!'",
-            --             --             severity = vim.diagnostic.severity.WARN,
-            --             --         })
-            --             --     end
-            --             -- end
-            --             return diagnostics
-            --         end,
-            --     },
-            -- }
-            -- null_ls.register(jai_null_lsp)
-
-            local jai_compile = {
+            local jai_null_lsp = {
                 method = null_ls.methods.DIAGNOSTICS_ON_SAVE,
-                source = "jai_null_lsp",
                 filetypes = { "jai" },
-                generator = null_ls.generator({
-                    command = "jai",
-                    -- args = function ()
-                    --     vim.cmd.echom[[called]]
-                    --     return [ "test.jai" ]
-                    -- end,
-                    args = { "test.jai" },
-                    -- dynamic_command = function ()
-                    --     return "jai.exe test.jai"
-                    -- end,
-                    format = "line",
-                    from_stderr = true,
+                generator = {
                     multiple_files = true,
-                    on_output = null_ls_helpers.diagnostics.from_patterns({
-                        {
-                            pattern = [[(.+):(%d+),(%d+): Error: (.+)]],
-                            groups = { "filename", "row", "col", "message" }
-                        },
-                        {
-                            pattern = [[(.+):(%d+),(%d+): (.+)]],
-                            groups = { "filename", "row", "col", "message" }
-                        },
-                        -- {
-                        --     pattern = [[(.+) \((.+):(%d+)\)]],
-                        --     groups = { "message","filename", "row" }
-                        -- },
-                    })
-                })
-            }
 
-            null_ls.register(jai_compile)
+                    async = true,
+                    -- make it async incase compilation takes a while
+                    fn = function(params, done)
+                        if vim.g.lsp_do_build == true --[[ or vim.g.lsp_do_build == nil  ]]then
+                            vim.cmd([[silent make!]]) -- compile program on save
+                        end
+
+                        local diagnostics = {}
+                        local qferrors = vim.fn.getqflist()
+                        -- sources have access to a params object
+                        -- containing info about the current file and editor state
+                        for i, error in ipairs(qferrors) do
+                            if error.valid == 1 then
+                                table.insert(diagnostics, {
+                                    filename = vim.api.nvim_buf_get_name(error.bufnr),
+                                    bufnr = error.bufnr,
+                                    row = error.lnum,
+                                    end_row = error.end_lnum,
+                                    col = error.col,
+                                    end_col = error.end_col,
+                                    source = "jai_null_lsp",
+                                    message = error.text,
+                                    severity = vim.diagnostic.severity.ERROR,
+                                })
+                            end
+                        end
+                        done(diagnostics)
+                    end,
+                    -- fn = function(params)
+                    --     vim.cmd([[silent make!]]) -- compile program on save
+                    --     local diagnostics = {}
+                    --     local qferrors = vim.fn.getqflist()
+                    --     -- sources have access to a params object
+                    --     -- containing info about the current file and editor state
+                    --     for i, error in ipairs(qferrors) do
+                    --         if error.valid == 1 then
+                    --             table.insert(diagnostics, {
+                    --                 filename = vim.api.nvim_buf_get_name(error.bufnr),
+                    --                 bufnr = error.bufnr,
+                    --                 row = error.lnum,
+                    --                 end_row = error.end_lnum,
+                    --                 col = error.col,
+                    --                 end_col = error.end_col,
+                    --                 source = "jai_null_lsp",
+                    --                 message = error.text,
+                    --                 severity = vim.diagnostic.severity.ERROR,
+                    --             })
+                    --         end
+                    --     end
+                    --     return diagnostics
+                    -- end,
+                },
+            }
+            null_ls.register(jai_null_lsp)
+
+            -- local jai_compile = {
+            --     method = null_ls.methods.DIAGNOSTICS_ON_SAVE,
+            --     source = "jai_null_lsp",
+            --     filetypes = { "jai" },
+            --     generator = null_ls.generator({
+            --         command = "jai",
+            --         -- args = function ()
+            --         --     vim.cmd.echom[[called]]
+            --         --     return [ "test.jai" ]
+            --         -- end,
+            --         args = { "test.jai" },
+            --         -- dynamic_command = function ()
+            --         --     return "jai.exe test.jai"
+            --         -- end,
+            --         format = "line",
+            --         from_stderr = true,
+            --         multiple_files = true,
+            --         on_output = null_ls_helpers.diagnostics.from_patterns({
+            --             {
+            --                 pattern = [[(.+):(%d+),(%d+): Error: (.+)]],
+            --                 groups = { "filename", "row", "col", "message" }
+            --             },
+            --             {
+            --                 pattern = [[(.+):(%d+),(%d+): (.+)]],
+            --                 groups = { "filename", "row", "col", "message" }
+            --             },
+            --             -- {
+            --             --     pattern = [[(.+) \((.+):(%d+)\)]],
+            --             --     groups = { "message","filename", "row" }
+            --             -- },
+            --         })
+            --     })
+            -- }
+
+            -- null_ls.register(jai_compile)
         end
     },
 }

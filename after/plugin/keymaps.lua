@@ -27,9 +27,10 @@ vim.keymap.set("n", "<leader>r", [[:%s/\<<C-r><C-w>\>/<C-r><C-w>/gI<Left><Left><
 vim.keymap.set("n", "<leader>l", "<cmd>Lazy<cr>", { desc = "Open Lazy" })
 
 -- I hate q
--- vim.keymap.set("n", "q", "<Nop>",   { desc = "I hate q" })
+vim.keymap.set("n", "q", "<Nop>",   { desc = "I hate q" })
 
 -- Better Pasting
+vim.keymap.set("n", "p", "p=`]", { desc = "Autoformat pasted text" })
 vim.keymap.set("v", "p", "\"_dP", { desc = "Dont place replaced text into clipboard" })
 
 -- Clear search with <esc>
@@ -78,9 +79,9 @@ local toggle_qf = function()
 end
 
 -- Quickfix List
-vim.keymap.set("n", "<leader>eq", function() toggle_qf() end, { desc = "Toggle Quickfix" })
-vim.keymap.set("n", "[q", ":cprev<cr>", { desc = "Previous Quickfix List entry" })
-vim.keymap.set("n", "]q", ":cnext<cr>", { desc = "Next Quickfix List entry" })
+vim.keymap.set("n", "<leader>eq", function() toggle_qf(); vim.cmd([[wincmd p]]) end, { desc = "Toggle Quickfix" })
+vim.keymap.set("n", "[q", ":try | cprev | catch | :cfirst | endtry<cr>", { desc = "Previous Quickfix List entry" })
+vim.keymap.set("n", "]q", ":try | cnext | catch | :clast | endtry<cr>", { desc = "Next Quickfix List entry" })
 vim.keymap.set("n", "[Q", ":cfirst<cr>", { desc = "Previous Quickfix List entry" })
 vim.keymap.set("n", "]Q", ":clast<cr>", { desc = "Next Quickfix List entry" })
 
@@ -123,6 +124,10 @@ vim.cmd([[
 ]])
 vim.keymap.set("n", "<c-=>", ":Bigger<cr>",  { silent = true, desc = "Increase Font Size"} )
 vim.keymap.set("n", "<c-->", ":Smaller<cr>", { silent = true, desc = "Decrease Font Size"} )
+
+-- Others
+vim.keymap.set("i", "<C-BS>", "<C-W>", { desc = "Delete word/whitespaces" } 	)
+vim.keymap.set("i", "<C-DEL>", "<C-o>dw", { desc = "Delete word/whitespaces" } 	)
 
 -- https://github.com/mhinz/vim-galore#saner-command-line-history
 -- Didnt get up/down keycodes to work

@@ -5,11 +5,10 @@ return {
         dependencies = {
             "tpope/vim-repeat",
         },
-        keys = {
-        },
         event = "VeryLazy",
         config = function(_, opts)
-            require('leap').add_default_mappings()
+            require('leap').add_default_mappings(true)
+            -- The same caveats as above about bidirectional search apply here.
         end
     },
     -- f/F t/T movement

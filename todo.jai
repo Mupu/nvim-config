@@ -1,10 +1,4 @@
-finish todo-comment
-
-complete from files in cwd maybe
-
-
-compile errors inline (https://www.reddit.com/r/neovim/comments/zlwf7u/how_to_display_compile_errors_inline_in_a/)
-        (https://github.com/jose-elias-alvarez/null-ls.nvim#parsing-cli-program-output)
+autocomplete from files in cwd maybe
 
 floatterm
     https://github.com/akinsho/toggleterm.nvim
