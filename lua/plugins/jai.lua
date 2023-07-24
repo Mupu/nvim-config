@@ -14,21 +14,22 @@ return {
         local jai_keybinds = vim.api.nvim_create_augroup("JaiKeybinds", { clear = true })
         vim.api.nvim_create_autocmd("BufEnter", {
             callback = function()
-                vim.keymap.set("n", "<leader>?", [[<cmd>lua require('telescope.builtin').live_grep( { cwd = "C:/jai", hidden = true, no_ignore = true })<cr>]], { desc = "Search current word in Jai Modules" } )
-                vim.keymap.set("n", "<leader>sW", [[<cmd>lua require('telescope.builtin').grep_string( { cwd = "C:/jai", hidden = true, no_ignore = true })<cr>]], { desc = "Search in Jai Modules" } )
+                vim.keymap.set("n", "<leader>?", [[<cmd>lua require('telescope.builtin').live_grep( { cwd = "C:/jai", hidden = true, no_ignore = true })<cr>]], { desc = "Search word in Jai Modules" } )
+                vim.keymap.set("n", "<leader>sW", [[<cmd>lua require('telescope.builtin').grep_string( { cwd = "C:/jai", hidden = true, no_ignore = true })<cr>]], { desc = "Search word in Jai Modules" } )
+                vim.keymap.set("n", "<leader>fj", [[<cmd>lua require('telescope.builtin').find_files( { cwd = "C:/jai", hidden = true, no_ignore = true })<cr>]], { desc = "Search file in Jai Modules" } )
                 vim.keymap.set("n", "<leader>pb", "<cmd>silent make<bar>edit<cr>",  { desc = "Build jai project or file" })
                 vim.keymap.set("n", "<leader>pB", function()
                     -- Build current file
 
                     if vim.b.jai_compilable == nil or vim.b.jai_compilable == false then
                         -- register file
-                        vim.o.makeprg = vim.fn.FindJaiCompiler() .. " -no_color -quiet " .. vim.fn.expand('%:p') .. vim.fn.FindJaiModules()
+                        vim.o.makeprg = vim.fn.FindJaiCompiler() .. " -no_color -quiet -natvis " .. vim.fn.expand('%:p') .. vim.fn.FindJaiModules()
                         vim.b.jai_compilable = true
                         -- compiler file switching
                         vim.api.nvim_create_autocmd("BufEnter", {
                             callback = function()
                                 if vim.b.jai_compilable == true then
-                                    vim.o.makeprg = vim.fn.FindJaiCompiler() .. " -no_color -quiet " .. vim.fn.expand('%:p') .. vim.fn.FindJaiModules()
+                                    vim.o.makeprg = vim.fn.FindJaiCompiler() .. " -no_color -quiet -natvis " .. vim.fn.expand('%:p') .. vim.fn.FindJaiModules()
                                 end
                             end,
                             group = jai_keybinds,
@@ -62,6 +63,7 @@ return {
                 -- can fail for some reason when opening vim diagnostig floating window with gl
                 local ok = pcall(vim.keymap.del, "n", "<leader>?")
                 ok = pcall(vim.keymap.del, "n", "<leader>sW")
+                ok = pcall(vim.keymap.del, "n", "<leader>fj")
                 ok = pcall(vim.keymap.del, "n", "<leader>pb")
                 ok = pcall(vim.keymap.del, "n", "<leader>pB")
                 ok = pcall(vim.keymap.del, "n", "<leader>eb")

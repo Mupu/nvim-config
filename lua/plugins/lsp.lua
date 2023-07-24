@@ -46,6 +46,15 @@ return {
 
             lsp.setup()
 
+            lsp.new_server({
+                name = 'jails',
+                cmd = {'E:\\Projects\\_JaiProjects\\Jails\\bin\\jails.exe'},
+                filetypes = {'jai'},
+                root_dir = function()
+                    return lsp.dir.find_first({'build.jai', 'main.jai'})
+                end
+            })
+
             -- Autocompletion configuration
             local cmp = require('cmp')
             local cmp_action = require('lsp-zero').cmp_action()
@@ -174,7 +183,7 @@ return {
                     -- end,
                 },
             }
-            null_ls.register(jai_null_lsp)
+            -- null_ls.register(jai_null_lsp)
 
             -- local jai_compile = {
             --     method = null_ls.methods.DIAGNOSTICS_ON_SAVE,

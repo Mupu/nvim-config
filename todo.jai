@@ -1,4 +1,5 @@
 autocomplete from files in cwd maybe
+fix gs jump window (other shortcut overwrites it it seems)
 
 floatterm
     https://github.com/akinsho/toggleterm.nvim
