@@ -32,7 +32,7 @@ require('lazy').setup({
 	install = {
 		colorscheme = { "gruvbox" }, -- use it even on first install
 	},
-	
+
 	-- enable automatic updates
 	checker = {
 		enabled = true,
@@ -48,7 +48,7 @@ require('lazy').setup({
             version = false, -- 1.0.0 release was to old
 			config = function()
 				-- load the colorscheme here
-                local colors = require("gruvbox.palette")
+                local colors = require("gruvbox").palette
                 require("gruvbox").setup({
                     italic = {
                         strings = true,
@@ -59,7 +59,7 @@ require('lazy').setup({
                 })
 				vim.cmd([[colorscheme gruvbox]])
 			end,
-		},
+            },
 
         -- Needed for nvim-qt
         { "equalsraf/neovim-gui-shim", lazy = false },
