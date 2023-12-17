@@ -2,6 +2,9 @@
 -- NOTE: on windows you need this https://github.com/skeeto/w64devkit
 --
 
+-- Set Language to en_US
+vim.api.nvim_exec("language en_US", true)
+
 -- Must happen before plugins are loaded
 vim.g.mapleader = ' '
 vim.g.maplocalleader = ' '
@@ -25,7 +28,7 @@ require('lazy').setup({
 	-- make everything lazy load
 	defaults = {
 		lazy = true,
-		-- version = "*", -- disabled because it broke mason-lspconfig
+		version = "*", -- try to install latest stable release build
 	},
 
 	-- set colorscheme

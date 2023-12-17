@@ -3,7 +3,7 @@ return {
         -- https://github.com/VonHeikemen/lsp-zero.nvim
         "VonHeikemen/lsp-zero.nvim",
         lazy = false,
-        version = "v2.x",
+        branch = "v3.x",
         dependencies = {
             -- LSP Support
             {"neovim/nvim-lspconfig"},             -- Required
@@ -42,11 +42,11 @@ return {
             lsp.preset("recommended")
 
             -- (Optional) Configure lua language server for neovim
-            lsp.nvim_workspace()
+            lsp.nvim_lua_ls()
 
             lsp.setup()
 
-            lsp.new_server({
+            lsp.new_client({
                 name = 'jails',
                 cmd = {'E:\\Projects\\_JaiProjects\\Jails\\bin\\jails.exe'},
                 filetypes = {'jai'},
