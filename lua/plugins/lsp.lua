@@ -22,6 +22,9 @@ return {
             {"hrsh7th/cmp-path"},         -- Optional
             {"saadparwaiz1/cmp_luasnip"}, -- Optional
             {"hrsh7th/cmp-nvim-lua"},     -- Optional
+            --{"hrsh7th/cmp-nvim-lsp-signature-help"}, -- Optional
+
+            {"ray-x/lsp_signature.nvim"},
 
             -- Snippets
             {"L3MON4D3/LuaSnip"},             -- Required
@@ -33,6 +36,7 @@ return {
                 ensure_installed = {
                     -- Replace these with whatever servers you want to install
                     "lua_ls",
+                    "clangd",
                 }
             })
 
@@ -46,12 +50,24 @@ return {
 
             lsp.setup()
 
+            lsp.on_attach(function(client, bufnr)
+                require("lsp_signature").on_attach({
+                    bind = true, -- This is mandatory, otherwise border config won't get registered.
+                    handler_opts = {
+                        border = "rounded"
+                    },
+                    floating_window_off_y = 4,
+                }, bufnr)
+            end)
+
             lsp.new_client({
                 name = 'jails',
-                cmd = {'E:\\Projects\\_JaiProjects\\Jails\\bin\\jails.exe'},
+                cmd = {vim.fn.stdpath("config") .. "/jails.exe"},
                 filetypes = {'jai'},
                 root_dir = function()
-                    return lsp.dir.find_first({'build.jai', 'main.jai'})
+                    local root_dir = lsp.dir.find_first({'build.jai', 'first.jai', 'main.jai'})
+                                        or vim.fn.getcwd();
+                    return root_dir;
                 end
             })
 
@@ -66,7 +82,15 @@ return {
                 },
                 preselect = 'item',
                 completion = {
-                    completeopt = 'menu,menuone,noinsert'
+                    completeopt = 'menu,menuone,preview,noinsert'
+                },
+                sources = {
+                    { name = 'nvim_lsp' },
+                    { name = 'buffer' },
+                    { name = 'luasnip' },
+                    { name = 'path' },
+                    { name = 'nvim_lua' },
+                    --{ name = 'nvim_lsp_signature_help' },
                 },
             })
 

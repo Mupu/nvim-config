@@ -31,6 +31,13 @@ return {
             desc = "Find Files (git then cwd)"
         },
         {
+            "<leader>sv",
+            function()
+                require('telescope.builtin').live_grep({ cwd = vim.fn.stdpath("config"), hidden = true, no_ignore = true })
+            end,
+            desc = "Find Nvim Config"
+        },
+        {
             "<leader>fv",
             function()
                 require('telescope.builtin').git_files( { cwd = vim.fn.stdpath("config"), hidden = true, no_ignore = true })

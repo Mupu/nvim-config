@@ -16,7 +16,7 @@ return {
             callback = function()
                 vim.keymap.set("n", "<leader>?", [[<cmd>lua require('telescope.builtin').live_grep( { cwd = "C:/jai", hidden = true, no_ignore = true })<cr>]], { desc = "Search word in Jai Modules" } )
                 vim.keymap.set("n", "<leader>sW", [[<cmd>lua require('telescope.builtin').grep_string( { cwd = "C:/jai", hidden = true, no_ignore = true })<cr>]], { desc = "Search word in Jai Modules" } )
-                vim.keymap.set("n", "<leader>fj", [[<cmd>lua require('telescope.builtin').find_files( { cwd = "C:/jai", hidden = true, no_ignore = true })<cr>]], { desc = "Search file in Jai Modules" } )
+                vim.keymap.set("n", "<leader>fj", [[<cmd>lua require('telescope.builtin').grep_string( { cwd = "C:/jai", hidden = true, no_ignore = true })<cr>]], { desc = "Search in Jai Modules" } )
                 vim.keymap.set("n", "<leader>pb", "<cmd>silent make<bar>edit<cr>",  { desc = "Build jai project or file" })
                 vim.keymap.set("n", "<leader>pB", function()
                     -- Build current file

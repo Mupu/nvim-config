@@ -32,6 +32,7 @@ vim.keymap.set("n", "q", "<Nop>",   { desc = "I hate q" })
 -- Better Pasting
 vim.keymap.set("n", "p", "p=`]", { desc = "Autoformat pasted text" })
 vim.keymap.set("v", "p", "\"_dP", { desc = "Dont place replaced text into clipboard" })
+vim.keymap.set("i", "<C-v>", "<C-r>+", { desc = "Paste from system clipboard" })
 
 -- Clear search with <esc>
 vim.keymap.set({ "i", "n" }, "<esc>", "<cmd>noh<cr><esc>", { desc = "Escape and clear hlsearch" })
