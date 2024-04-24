@@ -31,26 +31,25 @@ return {
             {"rafamadriz/friendly-snippets"}, -- Optional
         },
         config = function()
+            local lsp_zero = require("lsp-zero")
+
             require("mason").setup()
             require("mason-lspconfig").setup({
                 ensure_installed = {
                     -- Replace these with whatever servers you want to install
                     "lua_ls",
                     "clangd",
+                },
+                handlers = {
+                    lsp_zero.default_setup,
+                    lua_ls = function()
+                        require('lspconfig').lua_ls.setup(lsp_zero.nvim_lua_ls())
+                    end,
                 }
             })
 
-            -- Learn the keybindings, see :help lsp-zero-keybindings
-            -- Learn to configure LSP servers, see :help lsp-zero-api-showcase
-            local lsp = require("lsp-zero")
-            lsp.preset("recommended")
-
-            -- (Optional) Configure lua language server for neovim
-            lsp.nvim_lua_ls()
-
-            lsp.setup()
-
-            lsp.on_attach(function(client, bufnr)
+            lsp_zero.on_attach(function(client, bufnr)
+                -- lsp_zero.default_keymaps({buffer = bufnr})
                 require("lsp_signature").on_attach({
                     bind = true, -- This is mandatory, otherwise border config won't get registered.
                     handler_opts = {
@@ -60,12 +59,12 @@ return {
                 }, bufnr)
             end)
 
-            lsp.new_client({
+            lsp_zero.new_client({
                 name = 'jails',
                 cmd = {vim.fn.stdpath("config") .. "/jails.exe"},
                 filetypes = {'jai'},
                 root_dir = function()
-                    local root_dir = lsp.dir.find_first({'build.jai', 'first.jai', 'main.jai'})
+                    local root_dir = lsp_zero.dir.find_first({'build.jai', 'first.jai', 'main.jai'})
                                         or vim.fn.getcwd();
                     return root_dir;
                 end

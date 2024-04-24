@@ -53,6 +53,21 @@ require('lazy').setup({
 				-- load the colorscheme here
                 local colors = require("gruvbox").palette
                 require("gruvbox").setup({
+                    overrides = {
+                        -- Comment        = { fg = colors.bright_aqua, italic = true },
+                        -- Function       = { fg = colors.neutral_yellow },
+                        -- Keyword        = { fg = colors.bright_red },
+                        -- Conditional    = { fg = colors.neutral_purple },
+                        -- Repeat         = { fg = colors.neutral_purple },                   -- For, While
+                        -- Type           = { fg = colors.neutral_aqua },
+                        -- Structure      = { fg = colors.dark_blue },                   -- Struct, Union, Enum
+                        -- PreProc        = { fg = colors.neutral_orange },                   -- directives
+                        -- --Identifier     = { fg = "#ffffff" },
+                        -- -- Constant       = { fg = colors.bright_green },
+                        -- -- Boolean        = { fg = colors.bright_green },
+                        -- -- Float          = { fg = colors.bright_green },
+                        -- -- Number         = { fg = colors.bright_green },
+                    },
                     italic = {
                         strings = true,
                         comments = true,

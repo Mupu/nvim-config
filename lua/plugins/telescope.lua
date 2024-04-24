@@ -40,7 +40,7 @@ return {
         {
             "<leader>fv",
             function()
-                require('telescope.builtin').git_files( { cwd = vim.fn.stdpath("config"), hidden = true, no_ignore = true })
+                require('telescope.builtin').find_files( { cwd = vim.fn.stdpath("config"), hidden = true, no_ignore = true })
             end,
             desc = "Find Nvim Config"
         },
